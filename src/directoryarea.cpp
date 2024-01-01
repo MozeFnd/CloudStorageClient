@@ -19,20 +19,19 @@ void DirectoryArea::setScrollArea(QScrollArea* scroll_area) {
     DirecotryItem::height_ = 50;
 }
 
-void DirectoryArea::createDirectoryItem(std::string name, uint32_t unique_id){
+void DirectoryArea::addDirectoryItem(std::string name, uint32_t unique_id){
     std::shared_ptr<DirecotryItem> item = std::make_shared<DirecotryItem>(unique_id, nullptr, name);
     auto menu = std::make_shared<OperationMenu>(item);
     item->setMenu(menu);
     dirs_[unique_id] = item;
     layout_->addWidget(item.get());
-    height_ += 65;
-    // scroll_content_->resize(scroll_content_->width(), height_);
+    height_ = (dirs_.size() <= 8 ? dirs_.size() : 8) * 65 + 20;
     scroll_area_->resize(scroll_area_->width(), height_);
 }
 
 void DirectoryArea::removeDirectoryItem(uint32_t unique_id) {
     layout_->removeWidget(dirs_[unique_id].get());
     dirs_.erase(unique_id);
-    height_ -= 55;
-    scroll_content_->resize(scroll_content_->width(), height_);
+    height_ = (dirs_.size() <= 8 ? dirs_.size() : 8) * 65 + 20;
+    scroll_area_->resize(scroll_area_->width(), height_);
 }

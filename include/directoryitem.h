@@ -24,9 +24,14 @@ class DirecotryItem : public QLabel
 {
     Q_OBJECT
 public:
+    enum STATUS {
+        UNSYNCRONIZED = 0,
+        SYNCRONIZING = 1,
+        SYNCRONIZED = 2,
+    };
     DirecotryItem() = delete;
     explicit DirecotryItem(uint32_t unique_id, QWidget* parent = nullptr, std::string name = "empty");
-    void init();
+    void initShape();
     void setName(std::string name);
     void setMenu(std::shared_ptr<OperationMenu> menu) {
         menu_ = menu;
@@ -44,6 +49,7 @@ private:
     std::shared_ptr<OperationMenu> menu_;
     std::string name_;
     uint32_t unique_id_;
+    uint8_t status_;
 };
 
 #endif // DIRECTORYITEM_H

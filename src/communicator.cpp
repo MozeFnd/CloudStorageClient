@@ -117,7 +117,7 @@ std::vector<uint32_t> Communicator::acquireIDinBatch() {
         uint32_t tmp = reinterpret_cast<uint32_t*>(buffer)[i];
         id.push_back(tmp);
     }
-    delete buffer;
+    free(buffer);
     closeConnection();
     return id;
 }
@@ -145,7 +145,7 @@ void Communicator::addNewDirectory(uint32_t id, std::string name, std::shared_pt
     socket_.write(buffer, buffer_size);
     socket_.flush();
 
-    delete buffer;
+    free(buffer);
     closeConnection();
 }
 
@@ -195,6 +195,7 @@ void Communicator::syncFile(uint32_t id, std::string path, std::string relativeP
         blockWrite(buffer, bytesRead + 5);
         memset(buffer, 0, bytesRead + 5);
     }
+    file.close();
 
     free(buffer);
     closeConnection();
@@ -207,9 +208,7 @@ std::unordered_map<uint32_t, std::string> Communicator::getAllDirIDandName() {
 
     char* buffer = (char *)malloc(1000);
     buffer[0] = (char)GetAllDir;
-    const char* buffer_c = buffer;
-    socket_.write(buffer_c, 1);
-    socket_.flush();
+    blockWrite(buffer, 1);
 
     if (socket_.waitForReadyRead()) {
         blockRead(buffer, 4);

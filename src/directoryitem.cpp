@@ -25,10 +25,11 @@ DirecotryItem::DirecotryItem(uint32_t unique_id, QWidget* parent, std::string na
 {
     name_ = name;
     unique_id_ = unique_id;
-    init();
+    status_ = STATUS::UNSYNCRONIZED;
+    initShape();
 }
 
-void DirecotryItem::init(){
+void DirecotryItem::initShape(){
     this->setFixedSize(width_, height_);
     this->setText(QString::fromStdString(name_));
     this->setMargin(5);

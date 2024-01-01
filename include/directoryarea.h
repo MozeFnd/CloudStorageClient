@@ -14,7 +14,7 @@ public:
     DirectoryArea();
     ~DirectoryArea();
     void setScrollArea(QScrollArea* scroll_area);
-    void createDirectoryItem(std::string name, uint32_t unique_id);
+    void addDirectoryItem(std::string name, uint32_t unique_id);
     void removeDirectoryItem(uint32_t unique_id);
 private:
     std::unordered_map<uint32_t, std::shared_ptr<DirecotryItem>> dirs_;

@@ -63,6 +63,7 @@ private:
             kvstore_->store("usedID", usedID + "," + std::to_string(id));
         }
     }
+
     void eraseIDandPath(uint32_t id) {
         kvstore_->remove(std::to_string(id));
         auto usedID = kvstore_->read("usedID");
@@ -85,6 +86,7 @@ private:
 public:
     void init(std::shared_ptr<DirectoryArea> directory_area) {
         directory_area_ = directory_area;
+
         auto recordedID = splitStr(kvstore_->read("usedID"), ',');
         for (auto id : recordedID) {
             kvstore_->store(id, "C:/Users/10560/Desktop/qt_tests/A");
@@ -134,7 +136,7 @@ public:
         auto dir_name = std::filesystem::path(path).filename().string();
         syncDirectory(id, path, dir_name);
 
-        directory_area_->createDirectoryItem(name, id);
+        directory_area_->addDirectoryItem(name, id);
         for (auto& id_to_remove : covered_ids) {
             directory_area_->removeDirectoryItem(id_to_remove);
             eraseIDandPath(id);
