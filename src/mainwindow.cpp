@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <QPushButton>
 #include <QFileDialog>
-
+#include "jsontool.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,37 +26,36 @@ MainWindow::MainWindow(QWidget *parent)
         QString serverIP = ui->textEditIP->toPlainText();
         QString port = ui->textEditPort->toPlainText();
         qDebug() << serverIP << " " << port;
-        comm_->buildConnection(serverIP, port.toLong());
-        comm_->login(uname, pwd);
 
+        comm_->login(uname, pwd);
+        // auto arr = comm_->acquireIDinBatch();
+        return;
         // qDebug() << uname << " " << upwd;
     });
 
     connect(ui->SelectDirButton, &QPushButton::clicked,[&](){
         QString path = QFileDialog::getExistingDirectory(this, "选择要同步的目录");
-        qDebug() << path << " ";
-        core_logic_->trackDirecotory(path.toStdString());
+        qDebug() << path << "\n";
+        // core_logic_->trackDirecotory(path.toStdString());
+
+        auto js = Json::fromPath(path.toStdString());
+        qDebug() << QString::fromStdString(js->toString()) << "\n";
+        return;
     });
 
     connect(ui->displayTree, &QPushButton::clicked, [&](){
         path_tree_->display(ui->treeView);
     });
 
-    // QWidget *centralWidget = new QWidget();
-    // QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
-
-
-    // centralLayout->addWidget(ui->scrollArea);
-
-    // this->setCentralWidget(centralWidget);
-    // this->resize(400,300);
-
-    // KVStore kvstore;
-    // // kvstore.insert("123","456");
-    // QString v = kvstore.read("123");
-    // qDebug() << v;
-
-
+    std::string text = "{\"dirname\":\"A\",\"type\":\"direcory\",\"contents\":[{\"dirname\":\"B\",\"type\":"
+                       "\"direcory\",\"contents\":[{\"dirname\":\"D\",\"type\":\"direcory\"},{\"dirname\":\"E\","
+                       "\"type\":\"direcory\"}]},{\"dirname\":\"C\",\"type\":\"direcory\"},{\"size\":\"31\","
+                       "\"filename\":\"textfile.txt\",\"type\":\"regular_file\"}]}";
+    Json::formattedOutput(text);
+    // auto js = Json::fromJsonString(text);
+    // std::string back = js->toString();
+    // qDebug() << QString::fromStdString(back);
+    return;
 }
 
 MainWindow::~MainWindow()

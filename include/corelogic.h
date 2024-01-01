@@ -6,6 +6,7 @@
 #include "communicator.h"
 #include "pathtree.h"
 #include "util.h"
+#include <filesystem>
 
 #define INVALID_ID 0
 
@@ -19,9 +20,12 @@ private:
     uint32_t acquireUniqueId(){
         std::string remained_id = kvstore_->read("unusedID");
         if (remained_id.empty()) {
-            kvstore_->store("unusedID", "10,11,12,13,15,16,17");
             // get a batch of id from server
-            remained_id = kvstore_->read("unusedID");
+            auto newID = communicator_->acquireIDinBatch();
+            remained_id.append(std::to_string(newID[0]));
+            for (int i = 1;i < newID.size();i++) {
+                remained_id.append("," + std::to_string(newID[i]));
+            }
         }
         size_t comma_pos = remained_id.find(',');
         uint32_t id;
@@ -36,6 +40,7 @@ private:
         kvstore_->store("unusedID", remained_id);
         return id;
     }
+
     void releaseUniqueId(uint32_t id){
         std::string remained_id = kvstore_->read("unusedID");
         if (remained_id.empty()) {
@@ -82,14 +87,23 @@ public:
         directory_area_ = directory_area;
         auto recordedID = splitStr(kvstore_->read("usedID"), ',');
         for (auto id : recordedID) {
+            kvstore_->store(id, "C:/Users/10560/Desktop/qt_tests/A");
             auto path = kvstore_->read(id);
             trackDirecotory(path, std::stoi(id));
         }
         // trackDirecotory("C:/Users/10560/Desktop/qt_tests/A");
-        // trackDirecotory("C:/Users/10560/Desktop/qt_tests/B");
-        // trackDirecotory("C:/Users/10560/Desktop/qt_tests/C");
-        // trackDirecotory("C:/Users/10560/Desktop/qt_tests/D");
-        // trackDirecotory("C:/Users/10560/Desktop/qt_tests/E");
+    }
+
+    void syncDirectory(uint32_t id, std::string path, std::string relativePath) {
+        for (const auto& entry : std::filesystem::directory_iterator(path)) {
+            if (entry.is_regular_file()) {
+                auto filepath = entry.path().string();
+                communicator_->syncFile(id, filepath, relativePath + "/" + entry.path().filename().string());
+            } else if (entry.is_directory()) {
+                auto dirname = entry.path().filename().string();
+                syncDirectory(id, entry.path().string(), relativePath + "/" + dirname);
+            }
+        }
     }
 
     /**
@@ -113,11 +127,19 @@ public:
 
         auto dirs = splitStr(path, '/');
         auto name = dirs[dirs.size() - 1];
+
+        auto archJs = Json::fromPath(path);
+        // communicator_->addNewDirectory(id, name, archJs);
+
+        auto dir_name = std::filesystem::path(path).filename().string();
+        syncDirectory(id, path, dir_name);
+
         directory_area_->createDirectoryItem(name, id);
         for (auto& id_to_remove : covered_ids) {
             directory_area_->removeDirectoryItem(id_to_remove);
             eraseIDandPath(id);
         }
+
         return "文件夹开始同步";
     }
 
