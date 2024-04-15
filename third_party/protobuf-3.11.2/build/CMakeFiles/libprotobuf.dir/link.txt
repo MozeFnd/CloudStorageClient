@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\libprotobuf.dir/objects.a
+C:\Qt\Tools\mingw1120_64\bin\ar.exe qc CMakeFiles\libprotobuf.dir/objects.a @CMakeFiles\libprotobuf.dir\objects1.rsp
+C:\Qt\Tools\mingw1120_64\bin\c++.exe -std=gnu++11 -shared -o libprotobuf.dll -Wl,--out-implib,libprotobuf.dll.a -Wl,--major-image-version,3,--minor-image-version,11 -Wl,--whole-archive CMakeFiles\libprotobuf.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\libprotobuf.dir\linkLibs.rsp

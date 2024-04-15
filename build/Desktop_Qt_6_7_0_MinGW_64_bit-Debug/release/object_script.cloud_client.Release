@@ -1,0 +1,16 @@
+release/node.pb.o
+release/communicator.o
+release/corelogic.o
+release/directoryarea.o
+release/directoryitem.o
+release/getnamedialog.o
+release/jsontool.o
+release/kvstore.o
+release/main.o
+release/mainwindow.o
+release/pathtree.o
+release/tree.o
+release/util.o
+release/moc_directoryitem.o
+release/moc_getnamedialog.o
+release/moc_mainwindow.o

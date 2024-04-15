@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package tree;
+
+message Node {
+    bool is_root = 1;
+    uint32 file_type = 2;
+    uint32 id = 3;
+}

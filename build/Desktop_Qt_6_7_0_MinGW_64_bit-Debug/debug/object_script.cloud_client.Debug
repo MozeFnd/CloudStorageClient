@@ -1,0 +1,16 @@
+debug/node.pb.o
+debug/communicator.o
+debug/corelogic.o
+debug/directoryarea.o
+debug/directoryitem.o
+debug/getnamedialog.o
+debug/jsontool.o
+debug/kvstore.o
+debug/main.o
+debug/mainwindow.o
+debug/pathtree.o
+debug/tree.o
+debug/util.o
+debug/moc_directoryitem.o
+debug/moc_getnamedialog.o
+debug/moc_mainwindow.o

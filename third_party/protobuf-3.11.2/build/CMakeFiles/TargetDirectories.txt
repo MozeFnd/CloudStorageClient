@@ -1,0 +1,10 @@
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/libprotobuf-lite.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/libprotobuf.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/libprotoc.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/protoc.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/edit_cache.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/rebuild_cache.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/list_install_components.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/install.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/install/local.dir
+C:/Users/10560/Desktop/QtProjects/cloud_client/third_party/protobuf-3.11.2/mingw_build_v3/CMakeFiles/install/strip.dir
