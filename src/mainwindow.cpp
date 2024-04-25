@@ -52,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << path;
         auto root = Node::fromPath(path.toStdWString(), str2wstr(""), true);
 
-        uint32_t id = comm_->acquireID();
-        root->set_id(id);
+        // uint32_t id = comm_->acquireID();
+        // root->set_id(id);
 
         if (root == nullptr) {
             qDebug() << "Fail to build Node object.";
@@ -73,6 +73,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->displayTree, &QPushButton::clicked, [&](){
         path_tree_->display(ui->treeView);
     });
+
+    uint32_t id;
+    for (size_t i = 0;i < 10;i++) {
+        id = comm_->acquireID();
+        qDebug() << "get id: " << id;
+    }
 
     std::string text = "{\"dirname\":\"A\",\"type\":\"direcory\",\"contents\":[{\"dirname\":\"B\",\"type\":"
                        "\"direcory\",\"contents\":[{\"dirname\":\"D\",\"type\":\"direcory\"},{\"dirname\":\"E\","

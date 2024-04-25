@@ -40,9 +40,11 @@ void Communicator::closeConnection(){
 }
 
 void Communicator::blockRead(char* buffer, int n) {
-    int acc = 0;
-    while (acc < n) {
-        acc += socket_.read(buffer + acc, n - acc);
+    if (socket_.waitForReadyRead()) {
+        int acc = 0;
+        while (acc < n) {
+            acc += socket_.read(buffer + acc, n - acc);
+        }
     }
 }
 
