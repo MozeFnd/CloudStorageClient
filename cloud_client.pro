@@ -10,7 +10,7 @@ INCLUDEPATH += $$PWD\include
 
 # DEFINES += PROTOBUF_USE_DLLS
 INCLUDEPATH += $$PWD\third_party\protobuf-3.11.2\src
-LIBS += -L$$PWD\third_party\protobuf-3.11.2\build
+LIBS += -L$$PWD\third_party\protobuf-3.11.2\build -l protobuf
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

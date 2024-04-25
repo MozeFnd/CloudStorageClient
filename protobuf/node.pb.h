@@ -172,10 +172,82 @@ class Node :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kChildrenFieldNumber = 4,
+    kAbsPathFieldNumber = 5,
+    kRelativePathFieldNumber = 6,
+    kNameFieldNumber = 7,
     kIsRootFieldNumber = 1,
     kFileTypeFieldNumber = 2,
+    kLastModifiedTmstmpFieldNumber = 8,
+    kMaxLastModifiedTmstmpFieldNumber = 9,
     kIdFieldNumber = 3,
   };
+  // repeated .tree.Node children = 4;
+  int children_size() const;
+  private:
+  int _internal_children_size() const;
+  public:
+  void clear_children();
+  ::tree::Node* mutable_children(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tree::Node >*
+      mutable_children();
+  private:
+  const ::tree::Node& _internal_children(int index) const;
+  ::tree::Node* _internal_add_children();
+  public:
+  const ::tree::Node& children(int index) const;
+  ::tree::Node* add_children();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tree::Node >&
+      children() const;
+
+  // string abs_path = 5;
+  void clear_abs_path();
+  const std::string& abs_path() const;
+  void set_abs_path(const std::string& value);
+  void set_abs_path(std::string&& value);
+  void set_abs_path(const char* value);
+  void set_abs_path(const char* value, size_t size);
+  std::string* mutable_abs_path();
+  std::string* release_abs_path();
+  void set_allocated_abs_path(std::string* abs_path);
+  private:
+  const std::string& _internal_abs_path() const;
+  void _internal_set_abs_path(const std::string& value);
+  std::string* _internal_mutable_abs_path();
+  public:
+
+  // string relative_path = 6;
+  void clear_relative_path();
+  const std::string& relative_path() const;
+  void set_relative_path(const std::string& value);
+  void set_relative_path(std::string&& value);
+  void set_relative_path(const char* value);
+  void set_relative_path(const char* value, size_t size);
+  std::string* mutable_relative_path();
+  std::string* release_relative_path();
+  void set_allocated_relative_path(std::string* relative_path);
+  private:
+  const std::string& _internal_relative_path() const;
+  void _internal_set_relative_path(const std::string& value);
+  std::string* _internal_mutable_relative_path();
+  public:
+
+  // string name = 7;
+  void clear_name();
+  const std::string& name() const;
+  void set_name(const std::string& value);
+  void set_name(std::string&& value);
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  std::string* mutable_name();
+  std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
   // bool is_root = 1;
   void clear_is_root();
   bool is_root() const;
@@ -194,6 +266,24 @@ class Node :
   void _internal_set_file_type(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
+  // uint64 last_modified_tmstmp = 8;
+  void clear_last_modified_tmstmp();
+  ::PROTOBUF_NAMESPACE_ID::uint64 last_modified_tmstmp() const;
+  void set_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_last_modified_tmstmp() const;
+  void _internal_set_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 max_last_modified_tmstmp = 9;
+  void clear_max_last_modified_tmstmp();
+  ::PROTOBUF_NAMESPACE_ID::uint64 max_last_modified_tmstmp() const;
+  void set_max_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_max_last_modified_tmstmp() const;
+  void _internal_set_max_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
   // uint32 id = 3;
   void clear_id();
   ::PROTOBUF_NAMESPACE_ID::uint32 id() const;
@@ -208,8 +298,14 @@ class Node :
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tree::Node > children_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr abs_path_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr relative_path_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
   bool is_root_;
   ::PROTOBUF_NAMESPACE_ID::uint32 file_type_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 last_modified_tmstmp_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 max_last_modified_tmstmp_;
   ::PROTOBUF_NAMESPACE_ID::uint32 id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_node_2eproto;
@@ -283,6 +379,265 @@ inline void Node::_internal_set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
 inline void Node::set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_id(value);
   // @@protoc_insertion_point(field_set:tree.Node.id)
+}
+
+// repeated .tree.Node children = 4;
+inline int Node::_internal_children_size() const {
+  return children_.size();
+}
+inline int Node::children_size() const {
+  return _internal_children_size();
+}
+inline void Node::clear_children() {
+  children_.Clear();
+}
+inline ::tree::Node* Node::mutable_children(int index) {
+  // @@protoc_insertion_point(field_mutable:tree.Node.children)
+  return children_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tree::Node >*
+Node::mutable_children() {
+  // @@protoc_insertion_point(field_mutable_list:tree.Node.children)
+  return &children_;
+}
+inline const ::tree::Node& Node::_internal_children(int index) const {
+  return children_.Get(index);
+}
+inline const ::tree::Node& Node::children(int index) const {
+  // @@protoc_insertion_point(field_get:tree.Node.children)
+  return _internal_children(index);
+}
+inline ::tree::Node* Node::_internal_add_children() {
+  return children_.Add();
+}
+inline ::tree::Node* Node::add_children() {
+  // @@protoc_insertion_point(field_add:tree.Node.children)
+  return _internal_add_children();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::tree::Node >&
+Node::children() const {
+  // @@protoc_insertion_point(field_list:tree.Node.children)
+  return children_;
+}
+
+// string abs_path = 5;
+inline void Node::clear_abs_path() {
+  abs_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Node::abs_path() const {
+  // @@protoc_insertion_point(field_get:tree.Node.abs_path)
+  return _internal_abs_path();
+}
+inline void Node::set_abs_path(const std::string& value) {
+  _internal_set_abs_path(value);
+  // @@protoc_insertion_point(field_set:tree.Node.abs_path)
+}
+inline std::string* Node::mutable_abs_path() {
+  // @@protoc_insertion_point(field_mutable:tree.Node.abs_path)
+  return _internal_mutable_abs_path();
+}
+inline const std::string& Node::_internal_abs_path() const {
+  return abs_path_.GetNoArena();
+}
+inline void Node::_internal_set_abs_path(const std::string& value) {
+  
+  abs_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Node::set_abs_path(std::string&& value) {
+  
+  abs_path_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:tree.Node.abs_path)
+}
+inline void Node::set_abs_path(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  abs_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:tree.Node.abs_path)
+}
+inline void Node::set_abs_path(const char* value, size_t size) {
+  
+  abs_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:tree.Node.abs_path)
+}
+inline std::string* Node::_internal_mutable_abs_path() {
+  
+  return abs_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Node::release_abs_path() {
+  // @@protoc_insertion_point(field_release:tree.Node.abs_path)
+  
+  return abs_path_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Node::set_allocated_abs_path(std::string* abs_path) {
+  if (abs_path != nullptr) {
+    
+  } else {
+    
+  }
+  abs_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), abs_path);
+  // @@protoc_insertion_point(field_set_allocated:tree.Node.abs_path)
+}
+
+// string relative_path = 6;
+inline void Node::clear_relative_path() {
+  relative_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Node::relative_path() const {
+  // @@protoc_insertion_point(field_get:tree.Node.relative_path)
+  return _internal_relative_path();
+}
+inline void Node::set_relative_path(const std::string& value) {
+  _internal_set_relative_path(value);
+  // @@protoc_insertion_point(field_set:tree.Node.relative_path)
+}
+inline std::string* Node::mutable_relative_path() {
+  // @@protoc_insertion_point(field_mutable:tree.Node.relative_path)
+  return _internal_mutable_relative_path();
+}
+inline const std::string& Node::_internal_relative_path() const {
+  return relative_path_.GetNoArena();
+}
+inline void Node::_internal_set_relative_path(const std::string& value) {
+  
+  relative_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Node::set_relative_path(std::string&& value) {
+  
+  relative_path_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:tree.Node.relative_path)
+}
+inline void Node::set_relative_path(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  relative_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:tree.Node.relative_path)
+}
+inline void Node::set_relative_path(const char* value, size_t size) {
+  
+  relative_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:tree.Node.relative_path)
+}
+inline std::string* Node::_internal_mutable_relative_path() {
+  
+  return relative_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Node::release_relative_path() {
+  // @@protoc_insertion_point(field_release:tree.Node.relative_path)
+  
+  return relative_path_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Node::set_allocated_relative_path(std::string* relative_path) {
+  if (relative_path != nullptr) {
+    
+  } else {
+    
+  }
+  relative_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), relative_path);
+  // @@protoc_insertion_point(field_set_allocated:tree.Node.relative_path)
+}
+
+// string name = 7;
+inline void Node::clear_name() {
+  name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Node::name() const {
+  // @@protoc_insertion_point(field_get:tree.Node.name)
+  return _internal_name();
+}
+inline void Node::set_name(const std::string& value) {
+  _internal_set_name(value);
+  // @@protoc_insertion_point(field_set:tree.Node.name)
+}
+inline std::string* Node::mutable_name() {
+  // @@protoc_insertion_point(field_mutable:tree.Node.name)
+  return _internal_mutable_name();
+}
+inline const std::string& Node::_internal_name() const {
+  return name_.GetNoArena();
+}
+inline void Node::_internal_set_name(const std::string& value) {
+  
+  name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Node::set_name(std::string&& value) {
+  
+  name_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:tree.Node.name)
+}
+inline void Node::set_name(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:tree.Node.name)
+}
+inline void Node::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:tree.Node.name)
+}
+inline std::string* Node::_internal_mutable_name() {
+  
+  return name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Node::release_name() {
+  // @@protoc_insertion_point(field_release:tree.Node.name)
+  
+  return name_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Node::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:tree.Node.name)
+}
+
+// uint64 last_modified_tmstmp = 8;
+inline void Node::clear_last_modified_tmstmp() {
+  last_modified_tmstmp_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 Node::_internal_last_modified_tmstmp() const {
+  return last_modified_tmstmp_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 Node::last_modified_tmstmp() const {
+  // @@protoc_insertion_point(field_get:tree.Node.last_modified_tmstmp)
+  return _internal_last_modified_tmstmp();
+}
+inline void Node::_internal_set_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  last_modified_tmstmp_ = value;
+}
+inline void Node::set_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_last_modified_tmstmp(value);
+  // @@protoc_insertion_point(field_set:tree.Node.last_modified_tmstmp)
+}
+
+// uint64 max_last_modified_tmstmp = 9;
+inline void Node::clear_max_last_modified_tmstmp() {
+  max_last_modified_tmstmp_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 Node::_internal_max_last_modified_tmstmp() const {
+  return max_last_modified_tmstmp_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 Node::max_last_modified_tmstmp() const {
+  // @@protoc_insertion_point(field_get:tree.Node.max_last_modified_tmstmp)
+  return _internal_max_last_modified_tmstmp();
+}
+inline void Node::_internal_set_max_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  max_last_modified_tmstmp_ = value;
+}
+inline void Node::set_max_last_modified_tmstmp(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_max_last_modified_tmstmp(value);
+  // @@protoc_insertion_point(field_set:tree.Node.max_last_modified_tmstmp)
 }
 
 #ifdef __GNUC__

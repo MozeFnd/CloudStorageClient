@@ -20,6 +20,7 @@ public:
         AddDir = 4,
         SyncFile = 5,
         GetRemoteTree = 6,
+        UpdateRemoteTree = 7
     };
     Communicator(std::shared_ptr<KVStore> kvstore);
     ~Communicator();
@@ -28,8 +29,8 @@ public:
     bool login(QString uname, QString pwd);
     void blockRead(char* buffer, int n);
     void blockWrite(char* buffer, int n);
-    std::vector<uint32_t> acquireIDinBatch();
-    void addNewDirectory(uint32_t id, std::string name, std::shared_ptr<Json> archJs);
+    uint32_t acquireID();
+    void addNewDirectory(uint32_t id, std::string serialized);
     void syncFile(uint32_t id, std::string path, std::string relativePath);
     std::unordered_map<uint32_t, std::string> getAllDirIDandName();
     std::shared_ptr<Node> getRemoteTree(uint32_t id) {

@@ -14,6 +14,7 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
+extern PROTOBUF_INTERNAL_EXPORT_node_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Node_node_2eproto;
 namespace tree {
 class NodeDefaultTypeInternal {
  public:
@@ -47,6 +48,12 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_node_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::tree::Node, is_root_),
   PROTOBUF_FIELD_OFFSET(::tree::Node, file_type_),
   PROTOBUF_FIELD_OFFSET(::tree::Node, id_),
+  PROTOBUF_FIELD_OFFSET(::tree::Node, children_),
+  PROTOBUF_FIELD_OFFSET(::tree::Node, abs_path_),
+  PROTOBUF_FIELD_OFFSET(::tree::Node, relative_path_),
+  PROTOBUF_FIELD_OFFSET(::tree::Node, name_),
+  PROTOBUF_FIELD_OFFSET(::tree::Node, last_modified_tmstmp_),
+  PROTOBUF_FIELD_OFFSET(::tree::Node, max_last_modified_tmstmp_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::tree::Node)},
@@ -57,9 +64,12 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_node_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\nnode.proto\022\004tree\"6\n\004Node\022\017\n\007is_root\030\001 "
-  "\001(\010\022\021\n\tfile_type\030\002 \001(\r\022\n\n\002id\030\003 \001(\rb\006prot"
-  "o3"
+  "\n\nnode.proto\022\004tree\"\313\001\n\004Node\022\017\n\007is_root\030\001"
+  " \001(\010\022\021\n\tfile_type\030\002 \001(\r\022\n\n\002id\030\003 \001(\r\022\034\n\010c"
+  "hildren\030\004 \003(\0132\n.tree.Node\022\020\n\010abs_path\030\005 "
+  "\001(\t\022\025\n\rrelative_path\030\006 \001(\t\022\014\n\004name\030\007 \001(\t"
+  "\022\034\n\024last_modified_tmstmp\030\010 \001(\004\022 \n\030max_la"
+  "st_modified_tmstmp\030\t \001(\004b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_node_2eproto_deps[1] = {
 };
@@ -69,7 +79,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_nod
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_node_2eproto_once;
 static bool descriptor_table_node_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_node_2eproto = {
-  &descriptor_table_node_2eproto_initialized, descriptor_table_protodef_node_2eproto, "node.proto", 82,
+  &descriptor_table_node_2eproto_initialized, descriptor_table_protodef_node_2eproto, "node.proto", 232,
   &descriptor_table_node_2eproto_once, descriptor_table_node_2eproto_sccs, descriptor_table_node_2eproto_deps, 1, 0,
   schemas, file_default_instances, TableStruct_node_2eproto::offsets,
   file_level_metadata_node_2eproto, 1, file_level_enum_descriptors_node_2eproto, file_level_service_descriptors_node_2eproto,
@@ -94,8 +104,21 @@ Node::Node()
 }
 Node::Node(const Node& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _internal_metadata_(nullptr) {
+      _internal_metadata_(nullptr),
+      children_(from.children_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  abs_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_abs_path().empty()) {
+    abs_path_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.abs_path_);
+  }
+  relative_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_relative_path().empty()) {
+    relative_path_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.relative_path_);
+  }
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
   ::memcpy(&is_root_, &from.is_root_,
     static_cast<size_t>(reinterpret_cast<char*>(&id_) -
     reinterpret_cast<char*>(&is_root_)) + sizeof(id_));
@@ -103,6 +126,10 @@ Node::Node(const Node& from)
 }
 
 void Node::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Node_node_2eproto.base);
+  abs_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  relative_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&is_root_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&id_) -
       reinterpret_cast<char*>(&is_root_)) + sizeof(id_));
@@ -114,6 +141,9 @@ Node::~Node() {
 }
 
 void Node::SharedDtor() {
+  abs_path_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  relative_path_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void Node::SetCachedSize(int size) const {
@@ -131,6 +161,10 @@ void Node::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  children_.Clear();
+  abs_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  relative_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&is_root_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&id_) -
       reinterpret_cast<char*>(&is_root_)) + sizeof(id_));
@@ -162,6 +196,59 @@ const char* Node::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inter
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .tree.Node children = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_children(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // string abs_path = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          auto str = _internal_mutable_abs_path();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "tree.Node.abs_path"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string relative_path = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_relative_path();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "tree.Node.relative_path"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string name = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "tree.Node.name"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint64 last_modified_tmstmp = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          last_modified_tmstmp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint64 max_last_modified_tmstmp = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
+          max_last_modified_tmstmp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -209,6 +296,56 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_id(), target);
   }
 
+  // repeated .tree.Node children = 4;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_children_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(4, this->_internal_children(i), target, stream);
+  }
+
+  // string abs_path = 5;
+  if (this->abs_path().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_abs_path().data(), static_cast<int>(this->_internal_abs_path().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "tree.Node.abs_path");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_abs_path(), target);
+  }
+
+  // string relative_path = 6;
+  if (this->relative_path().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_relative_path().data(), static_cast<int>(this->_internal_relative_path().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "tree.Node.relative_path");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_relative_path(), target);
+  }
+
+  // string name = 7;
+  if (this->name().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "tree.Node.name");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_name(), target);
+  }
+
+  // uint64 last_modified_tmstmp = 8;
+  if (this->last_modified_tmstmp() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(8, this->_internal_last_modified_tmstmp(), target);
+  }
+
+  // uint64 max_last_modified_tmstmp = 9;
+  if (this->max_last_modified_tmstmp() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(9, this->_internal_max_last_modified_tmstmp(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -225,6 +362,34 @@ size_t Node::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // repeated .tree.Node children = 4;
+  total_size += 1UL * this->_internal_children_size();
+  for (const auto& msg : this->children_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // string abs_path = 5;
+  if (this->abs_path().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_abs_path());
+  }
+
+  // string relative_path = 6;
+  if (this->relative_path().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_relative_path());
+  }
+
+  // string name = 7;
+  if (this->name().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
   // bool is_root = 1;
   if (this->is_root() != 0) {
     total_size += 1 + 1;
@@ -235,6 +400,20 @@ size_t Node::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_file_type());
+  }
+
+  // uint64 last_modified_tmstmp = 8;
+  if (this->last_modified_tmstmp() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_last_modified_tmstmp());
+  }
+
+  // uint64 max_last_modified_tmstmp = 9;
+  if (this->max_last_modified_tmstmp() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_max_last_modified_tmstmp());
   }
 
   // uint32 id = 3;
@@ -275,11 +454,30 @@ void Node::MergeFrom(const Node& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  children_.MergeFrom(from.children_);
+  if (from.abs_path().size() > 0) {
+
+    abs_path_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.abs_path_);
+  }
+  if (from.relative_path().size() > 0) {
+
+    relative_path_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.relative_path_);
+  }
+  if (from.name().size() > 0) {
+
+    name_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
   if (from.is_root() != 0) {
     _internal_set_is_root(from._internal_is_root());
   }
   if (from.file_type() != 0) {
     _internal_set_file_type(from._internal_file_type());
+  }
+  if (from.last_modified_tmstmp() != 0) {
+    _internal_set_last_modified_tmstmp(from._internal_last_modified_tmstmp());
+  }
+  if (from.max_last_modified_tmstmp() != 0) {
+    _internal_set_max_last_modified_tmstmp(from._internal_max_last_modified_tmstmp());
   }
   if (from.id() != 0) {
     _internal_set_id(from._internal_id());
@@ -307,8 +505,17 @@ bool Node::IsInitialized() const {
 void Node::InternalSwap(Node* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
+  children_.InternalSwap(&other->children_);
+  abs_path_.Swap(&other->abs_path_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  relative_path_.Swap(&other->relative_path_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  name_.Swap(&other->name_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(is_root_, other->is_root_);
   swap(file_type_, other->file_type_);
+  swap(last_modified_tmstmp_, other->last_modified_tmstmp_);
+  swap(max_last_modified_tmstmp_, other->max_last_modified_tmstmp_);
   swap(id_, other->id_);
 }
 

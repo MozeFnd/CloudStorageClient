@@ -45,11 +45,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->SelectDirButton, &QPushButton::clicked,[&](){
         QString path = QFileDialog::getExistingDirectory(this, "选择要同步的目录");
-        qDebug() << path << "\n";
-        // core_logic_->trackDirecotory(path.toStdString());
+        if (path.isEmpty()) {
+            qDebug() << path << " is empty.";
+            return;
+        }
+        qDebug() << path;
+        auto root = Node::fromPath(path.toStdWString(), str2wstr(""), true);
 
-        auto js = Json::fromPath(path.toStdString());
-        qDebug() << QString::fromStdString(js->toString()) << "\n";
+        uint32_t id = comm_->acquireID();
+        root->set_id(id);
+
+        if (root == nullptr) {
+            qDebug() << "Fail to build Node object.";
+            return;
+        }
+        std::string print;
+        Node::formatted(root, print, 0);
+        qDebug() << QString::fromStdString(print);
+
+        auto serialized_root = root->serialize();
+
+        qDebug() << QString::fromStdString(serialized_root);
+        comm_->addNewDirectory(15, serialized_root);
         return;
     });
 

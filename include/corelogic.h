@@ -15,27 +15,8 @@ class CoreLogic
 {
 private:
     uint32_t acquireUniqueId(){
-        std::string remained_id = kvstore_->read("unusedID");
-        if (remained_id.empty()) {
-            // get a batch of id from server
-            auto newID = communicator_->acquireIDinBatch();
-            remained_id.append(std::to_string(newID[0]));
-            for (int i = 1;i < newID.size();i++) {
-                remained_id.append("," + std::to_string(newID[i]));
-            }
-        }
-        size_t comma_pos = remained_id.find(',');
-        uint32_t id;
-        if (comma_pos == std::string::npos) {
-            id = std::stoi(remained_id);
-            remained_id = "";
-        } else {
-            auto id_str = remained_id.substr(0, comma_pos);
-            remained_id = remained_id.substr(comma_pos + 1);
-            id = stoi(id_str);
-        }
-        kvstore_->store("unusedID", remained_id);
-        return id;
+        auto newID = communicator_->acquireID();
+        return newID;
     }
 
     void releaseUniqueId(uint32_t id){
@@ -107,7 +88,7 @@ public:
             // 将 path 从 string 转为 wstring
             // 否则 std::filesystem::exists() 将对包含中文的路径做出错误判断。
             auto node = Node::fromPath(w_path, str2wstr("") ,true);
-            local_tracked_dirs.push_back(node);
+            local_tracked_dirs_.push_back(node);
             // 展示文件夹
             auto name = wstr2str(node->name);
             directory_area_->addDirectoryItem(name, std::stoul(id));
@@ -132,7 +113,7 @@ public:
      * @param path
      * @return
      */
-    std::string trackDirecotory(std::string path, uint32_t id = INVALID_ID){
+    std::string beginToTrackDirecotory(std::string path, uint32_t id = INVALID_ID){
         if (id == INVALID_ID) {
             // id 为空时，说明path是由操作添加的
             id = acquireUniqueId();
@@ -165,7 +146,7 @@ public:
     }
 
     void scan() {
-        for (auto root : local_tracked_dirs) {
+        for (auto root : local_tracked_dirs_) {
             auto id = root->id;
 
         }
@@ -176,7 +157,7 @@ private:
     std::shared_ptr<Communicator> communicator_;
     std::shared_ptr<PathTree> path_tree_;
     std::shared_ptr<DirectoryArea> directory_area_;
-    std::vector<std::shared_ptr<Node>> local_tracked_dirs;  // 所有本地正在追踪的文件夹
+    std::vector<std::shared_ptr<Node>> local_tracked_dirs_;  // 所有本地正在追踪的文件夹
 };
 
 #endif // CORELOGIC_H

@@ -9,11 +9,16 @@
 #include <fileapi.h>
 #include <codecvt>
 #include <QDebug>
+#include <stdlib.h>
 // #include <openssl/md5.h>
 
 extern FILETIME LONG_LONG_AGO;
 
 void log_info(const std::string& message);
+
+FILETIME MicrosecondsToFileTime(uint64_t microseconds);
+
+uint64_t FileTimeToMicroseconds(const FILETIME& filetime);
 
 inline std::vector<std::string> splitStr(std::string str, char delimiter) {
     std::vector<std::string> arr;
@@ -42,22 +47,71 @@ inline std::string replace_char(std::string str, char init, char target){
     return ret;
 }
 
+// inline std::wstring str2wstr(std::string str){
+//     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+//     std::wstring wstr = converter.from_bytes(str);
+//     return wstr;
+// }
+
+// inline std::string wstr2str(const std::wstring wstr)
+// {
+//     std::string str;
+//     int len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL,NULL);
+//     char*buffer = new char[len + 1];
+//     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
+//     buffer[len] = '\0';
+//     str.append(buffer);
+//     delete[]buffer;
+//     return str;
+// }
+
 inline std::wstring str2wstr(std::string str){
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    std::wstring wstr = converter.from_bytes(str);
-    return wstr;
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+    return converterX.from_bytes(str);
 }
 
 inline std::string wstr2str(const std::wstring wstr)
 {
-    std::string str;
-    int len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL,NULL);
-    char*buffer = new char[len + 1];
-    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
-    buffer[len] = '\0';
-    str.append(buffer);
-    delete[]buffer;
-    return str;
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+    return converterX.to_bytes(wstr);
+}
+
+union WCharUnion {
+    wchar_t wc;  // 宽字符
+#ifdef __linux__
+    struct {
+        uint8_t byte1;  // 第1个字节
+        uint8_t byte2;  // 第2个字节
+        uint8_t byte3;  // 第3个字节
+        uint8_t byte4;  // 第4个字节
+    } bytes;
+#else
+    struct {
+        uint8_t byte1;  // 第1个字节
+        uint8_t byte2;  // 第2个字节
+    } bytes;
+#endif
+
+};
+
+inline std::string wstr2bytes(const std::wstring& wstr) {
+    size_t buf_len = wstr.size() * 2;
+    qDebug() << "buf_len: " << buf_len;
+    char* buffer = (char*)malloc(buf_len);
+    uint32_t idx = 0;
+    for (auto w_ch : wstr) {
+        WCharUnion wu;
+        wu.wc = w_ch;
+        char tmp1 = wu.bytes.byte1;
+        char tmp2 = wu.bytes.byte2;
+        buffer[idx++] = tmp1;
+        buffer[idx++] = tmp2;
+    }
+    std::string ret(buffer, buf_len);
+    free(buffer);
+    return ret;
 }
 
 inline FILETIME timestampToFileTime(uint64_t timestamp) {

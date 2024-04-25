@@ -6,6 +6,8 @@
 #include <memory>
 #include <queue>
 #include <windows.h>
+#include "util.h"
+#include "node.pb.h"
 
 #define DIRECTORY 0
 #define REGULAR_FILE 1
@@ -14,7 +16,7 @@ class Node{
 public:
     bool is_root;
     uint32_t file_type;
-    uint32_t id;     // 每个资料库都有一个全局唯一ID
+    uint32_t id;     // 每个资料库都有一个全局唯一ID，一个资料库的所有节点公用同一ID
 
     std::wstring abs_path;   // 绝对路径
     std::wstring relative_path;     // 相对路径
@@ -27,14 +29,40 @@ public:
     std::vector<std::shared_ptr<Node>> children;
 
 public:
-    void serialize();
-    void add_child(std::shared_ptr<Node> child) {
-        children.push_back(child);
+    Node() : children{} {
+        id = 0;
     }
 
-    static std::shared_ptr<Node> fromPath(std::wstring abs_path, std::wstring relative_path, bool is_root);
-};
+    void set_id(uint32_t id_) {
+        id = id_;
+        for (auto child : children) {
+            child->set_id(id);
+        }
+    }
 
+    void toPbNode(tree::Node* pb_node);
+
+    std::string serialize();
+
+    void add_child(std::shared_ptr<Node> child) { children.push_back(child); }
+
+    static std::shared_ptr<Node> fromPbNode(tree::Node* pb_node);
+
+    static std::shared_ptr<Node> fromSerializedStr(const std::string& serialezed);
+
+    static std::shared_ptr<Node> fromPath(std::wstring abs_path, std::wstring relative_path, bool is_root);
+
+    static void formatted(std::shared_ptr<Node> cur_node, std::string& cur_str, uint32_t layer) {
+        std::string indent = "";
+        for (size_t i = 0;i < layer;i++) {
+            indent += "  ";
+        }
+        cur_str = cur_str + indent + wstr2str(cur_node->name) + "\n";
+        for (auto child : cur_node->children) {
+            formatted(child, cur_str, layer + 1);
+        }
+    }
+};
 
 
 class Tree

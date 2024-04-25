@@ -100,64 +100,77 @@ bool Communicator::login(QString uname, QString pwd){
 // │      id(32bytes)       │
 // └────────────────────────┘
 
-std::vector<uint32_t> Communicator::acquireIDinBatch() {
+uint32_t Communicator::acquireID() {
     if (buildConnection() == false) {
-        return std::vector<uint32_t>{};
+        return 0;
     }
-
-    char* buffer = (char *)malloc(200);
+    size_t buffer_size = 10;
+    char* buffer = (char *)malloc(buffer_size);
     buffer[0] = (char)AcquireID;
-    const char* buffer_c = buffer;
-    socket_.write(buffer_c, 1);
-    socket_.flush();
-
-    if (socket_.waitForReadyRead()) {
-        socket_.read(buffer, 1);
-    } else {
-        qDebug() << "Error: " << socket_.errorString();
-    }
-    uint8_t len = buffer[0];
-    int acc = 0;
-    while (acc < len * 4) {
-        acc += socket_.read(buffer + acc, len * 4);
-    }
-
-    std::vector<uint32_t> id;
-    for (size_t i = 0;i < len;i++) {
-        uint32_t tmp = reinterpret_cast<uint32_t*>(buffer)[i];
-        id.push_back(tmp);
-    }
+    blockWrite(buffer, 1);
+    memset(buffer, 0, buffer_size);
+    // if (socket_.waitForReadyRead()) {
+    //     socket_.read(buffer, 1);
+    // }
+    // if (socket_.waitForReadyRead()) {
+    //     socket_.read(buffer, 1);
+    // } else {
+    //     qDebug() << "Error: " << socket_.errorString();
+    // }
+    blockRead(buffer, 4);
+    uint32_t id = *(uint32_t*)buffer;
     free(buffer);
     closeConnection();
     return id;
 }
 
-void Communicator::addNewDirectory(uint32_t id, std::string name, std::shared_ptr<Json> archJs) {
+void Communicator::addNewDirectory(uint32_t id, std::string serialized) {
     if (buildConnection() == false) {
         return;
     }
 
-    Json js;
-    js.addProperty("device", "max_sun");
-    js.addProperty("id", std::to_string(id));
-    js.addProperty("name", name);
-    js.addChild("arch", archJs);
-    auto data = js.toString();
+    auto data = serialized;
     auto buffer_size = 5 + data.size();
     char* buffer = (char*)malloc(buffer_size);
 
     *buffer = AddDir;
     *(uint32_t*)(buffer + 1) = data.size();
-
-    strcpy(buffer + 5, data.c_str());
+    // strcpy(buffer + 5, data.c_str());
+    memcpy(buffer + 5, data.c_str(), data.size());
     QString tmp(buffer);
     qDebug() << tmp;
-    socket_.write(buffer, buffer_size);
-    socket_.flush();
+    blockWrite(buffer, buffer_size);
 
     free(buffer);
     closeConnection();
 }
+
+// void Communicator::addNewDirectory(uint32_t id, std::string name, std::shared_ptr<Json> archJs) {
+//     if (buildConnection() == false) {
+//         return;
+//     }
+
+//     Json js;
+//     js.addProperty("device", "max_sun");
+//     js.addProperty("id", std::to_string(id));
+//     js.addProperty("name", name);
+//     js.addChild("arch", archJs);
+//     auto data = js.toString();
+//     auto buffer_size = 5 + data.size();
+//     char* buffer = (char*)malloc(buffer_size);
+
+//     *buffer = AddDir;
+//     *(uint32_t*)(buffer + 1) = data.size();
+
+//     strcpy(buffer + 5, data.c_str());
+//     QString tmp(buffer);
+//     qDebug() << tmp;
+//     socket_.write(buffer, buffer_size);
+//     socket_.flush();
+
+//     free(buffer);
+//     closeConnection();
+// }
 
 // ┌───────────────┬─────────────────────────┐
 // │SyncFile(1byte)│    json_size(4bytes)    │

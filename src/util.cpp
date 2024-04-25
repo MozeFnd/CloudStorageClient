@@ -20,3 +20,19 @@ void log_info(const std::string& message) {
 
     ofs << "[" << timestamp << "] " << message << std::endl;
 }
+
+FILETIME MicrosecondsToFileTime(uint64_t microseconds) {
+    uint64_t tmp;
+    tmp = (microseconds + 11644473600ULL * 1000000ULL) * 10;  // Convert microseconds to 100-nanosecond intervals and adjust for the FILETIME epoch
+    FILETIME filetime;
+    filetime.dwLowDateTime = tmp & 0xFFFFFFFF;
+    filetime.dwHighDateTime = static_cast<uint32_t>(tmp >> 32);
+    return filetime;
+}
+
+uint64_t FileTimeToMicroseconds(const FILETIME& filetime) {
+    uint64_t tmp;
+    tmp = filetime.dwLowDateTime;
+    tmp |= (static_cast<uint64_t>(filetime.dwHighDateTime) << 32);
+    return tmp / 10 - 11644473600000000ULL;  // Convert 100-nanosecond intervals to microseconds and adjust for the Unix epoch
+}
