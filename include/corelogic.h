@@ -65,25 +65,13 @@ public:
     CoreLogic() = delete;
     CoreLogic(std::shared_ptr<KVStore> kvstore, std::shared_ptr<Communicator> communicator, std::shared_ptr<PathTree> path_tree);
 
-    std::string read_path_from_id(std::string id) {
-        auto key = "path_of_" + id;
-        auto path = kvstore_->read(key);
-        return path;
-    }
-
-    void set_id_path(std::string id, std::string path){
-        auto key = "path_of_" + id;
-        kvstore_->store(key, path);
-    }
-
     void init(std::shared_ptr<DirectoryArea> directory_area) {
         directory_area_ = directory_area;
 
         // 从数据库中读取出本地追踪的文件夹的id列表
-        auto ids_str = kvstore_->read("used_id");
-        auto recordedID = splitStr(ids_str, ',');
-        for (auto id : recordedID) {
-            auto dir = read_path_from_id(id);
+        auto used_ids = kvstore_->get_used_id();
+        for (auto id : used_ids) {
+            auto dir = kvstore_->read_path_from_id(std::to_string(id));
             std::wstring w_path = str2wstr(dir);
             // 将 path 从 string 转为 wstring
             // 否则 std::filesystem::exists() 将对包含中文的路径做出错误判断。
@@ -91,19 +79,19 @@ public:
             local_tracked_dirs_.push_back(node);
             // 展示文件夹
             auto name = wstr2str(node->name);
-            directory_area_->addDirectoryItem(name, std::stoul(id));
+            directory_area_->addDirectoryItem(name, id);
         }
-        // trackDirecotory("C:/Users/10560/Desktop/qt_tests/A");
     }
 
-    void syncDirectory(uint32_t id, std::string path, std::string relativePath) {
-        for (const auto& entry : std::filesystem::directory_iterator(path)) {
+    void syncDirectory(uint32_t id, std::wstring w_path, std::string relativePath) {
+        for (const auto& entry : std::filesystem::directory_iterator(w_path)) {
             if (entry.is_regular_file()) {
-                auto filepath = entry.path().string();
-                communicator_->syncFile(id, filepath, relativePath + "/" + entry.path().filename().string());
+                auto wfilepath = entry.path().wstring();
+                auto new_relative_path = relativePath + "/" + entry.path().filename().string();
+                communicator_->syncFile(id, wfilepath, new_relative_path);
             } else if (entry.is_directory()) {
                 auto dirname = entry.path().filename().string();
-                syncDirectory(id, entry.path().string(), relativePath + "/" + dirname);
+                syncDirectory(id, entry.path().wstring(), relativePath + "/" + dirname);
             }
         }
     }
@@ -133,8 +121,9 @@ public:
         auto archJs = Json::fromPath(path);
         // communicator_->addNewDirectory(id, name, archJs);
 
-        auto dir_name = std::filesystem::path(path).filename().string();
-        syncDirectory(id, path, dir_name);
+        auto w_path = str2wstr(path);
+        auto dir_name = std::filesystem::path(w_path).filename().string();
+        syncDirectory(id, w_path, dir_name);
 
         directory_area_->addDirectoryItem(name, id);
         for (auto& id_to_remove : covered_ids) {

@@ -14,6 +14,7 @@ class Communicator
 {
 public:
     enum RequestType{
+        EXIT = 99,
         Login = 1,
         AcquireID = 2,
         GetAllDir = 3,
@@ -30,8 +31,8 @@ public:
     void blockRead(char* buffer, int n);
     void blockWrite(char* buffer, int n);
     uint32_t acquireID();
-    void addNewDirectory(uint32_t id, std::string serialized);
-    void syncFile(uint32_t id, std::string path, std::string relativePath);
+    void remoteAddNewDirectory(uint32_t id, std::string serialized);
+    void syncFile(uint32_t id, std::wstring path, std::string relativePath);
     std::unordered_map<uint32_t, std::string> getAllDirIDandName();
     std::shared_ptr<Node> getRemoteTree(uint32_t id) {
         if (!buildConnection()) {

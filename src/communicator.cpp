@@ -126,7 +126,7 @@ uint32_t Communicator::acquireID() {
     return id;
 }
 
-void Communicator::addNewDirectory(uint32_t id, std::string serialized) {
+void Communicator::remoteAddNewDirectory(uint32_t id, std::string serialized) {
     if (buildConnection() == false) {
         return;
     }
@@ -185,7 +185,7 @@ void Communicator::addNewDirectory(uint32_t id, std::string serialized) {
 // │                     data                       │
 // │                                                │
 // └────────────────────────────────────────────────┘
-void Communicator::syncFile(uint32_t id, std::string path, std::string relativePath) {
+void Communicator::syncFile(uint32_t id, std::wstring wfilepath, std::string relativePath) {
     if (!buildConnection()) {
         // logging;
         return;
@@ -202,7 +202,12 @@ void Communicator::syncFile(uint32_t id, std::string path, std::string relativeP
     blockWrite(buffer, jsonStr.size() + 5);
     memset(buffer, 0, jsonStr.size() + 5);
 
-    std::ifstream file(path, std::ios::binary);
+    std::filesystem::path w_path(wfilepath);
+    std::ifstream file(w_path, std::ios::binary);
+    if (!file.is_open()) {
+        qDebug() << "fail to open file " << wfilepath;
+        closeConnection();
+    }
     int cnt = 0;
     while (!file.eof()) {
         cnt++;
