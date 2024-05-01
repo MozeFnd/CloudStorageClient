@@ -40,11 +40,10 @@ void Communicator::closeConnection(){
 }
 
 void Communicator::blockRead(char* buffer, int n) {
-    if (socket_.waitForReadyRead()) {
-        int acc = 0;
-        while (acc < n) {
-            acc += socket_.read(buffer + acc, n - acc);
-        }
+    int acc = 0;
+    while (acc < n) {
+        acc += socket_.read(buffer + acc, n - acc);
+        socket_.waitForReadyRead();
     }
 }
 
@@ -175,7 +174,7 @@ void Communicator::remoteAddNewDirectory(uint32_t id, std::string serialized) {
 // }
 
 // ┌───────────────┬─────────────────────────┐
-// │SyncFile(1byte)│    json_size(4bytes)    │
+// │UploadFile(1byte)│    json_size(4bytes)    │
 // ├───────────────┴─────────────────────────┤
 // │          json(id,relative_path)         │
 // └─────────────────────────────────────────┘
@@ -185,17 +184,21 @@ void Communicator::remoteAddNewDirectory(uint32_t id, std::string serialized) {
 // │                     data                       │
 // │                                                │
 // └────────────────────────────────────────────────┘
-void Communicator::syncFile(uint32_t id, std::wstring wfilepath, std::string relativePath) {
+void Communicator::uploadFile(uint32_t id, std::wstring wfilepath, std::string relativePath) {
     if (!buildConnection()) {
         // logging;
         return;
     }
     int max_batch_size = 1000;
     char* buffer = (char*)malloc(max_batch_size + 5);
-    buffer[0] = SyncFile;
+    buffer[0] = UploadFile;
     Json js;
     js.addProperty("id", std::to_string(id));
     js.addProperty("relative_path", relativePath);
+    FILETIME timestamp = get_last_modified(wfilepath);
+    uint64_t micro_sec = FileTimeToMicroseconds(timestamp);
+    js.addProperty("timestamp", std::to_string(micro_sec));
+
     auto jsonStr = js.toString();
     *(uint32_t*)(buffer+1) = jsonStr.size();
     strcpy(buffer + 5, jsonStr.c_str());
@@ -229,6 +232,54 @@ void Communicator::syncFile(uint32_t id, std::wstring wfilepath, std::string rel
 
     free(buffer);
     closeConnection();
+}
+
+void Communicator::downloadFile(uint32_t id, std::string relativePath) {
+    if (!buildConnection()) {
+        // logging;
+        return;
+    }
+    int max_batch_size = 1000;
+    char* buffer = (char*)malloc(max_batch_size + 5);
+    buffer[0] = DownloadFile;
+
+    Json js;
+    js.addProperty("id", std::to_string(id));
+    js.addProperty("relative_path", relativePath);
+
+    auto jsonStr = js.toString();
+    *(uint32_t*)(buffer+1) = jsonStr.size();
+    strcpy(buffer + 5, jsonStr.c_str());
+
+    // send
+    blockWrite(buffer, jsonStr.size() + 5);
+
+    // receive
+    auto prefix = kvstore_->read_path_from_id(std::to_string(id));
+    uint32_t first_pos = relativePath.find('/');
+    std::string tmp = relativePath.substr(first_pos + 1);
+    std::wstring wfilepath = str2wstr(prefix + "/" + tmp);
+    std::filesystem::path w_path(wfilepath);
+    std::ofstream file(w_path, std::ios::binary);
+    if (!file.is_open()) {
+        qDebug() << "fail to open file " << wfilepath;
+        closeConnection();
+    }
+
+    while (true) {
+        blockRead(buffer, 4);
+        size_t batch_size = *(uint32_t*)buffer;
+        blockRead(buffer, 1);
+        bool is_last = *buffer == 1;
+        if (batch_size != 0) {
+            blockRead(buffer, batch_size);
+            file.write(buffer, batch_size);
+        }
+        if (is_last) {
+            break;
+        }
+    }
+    file.close();
 }
 
 std::unordered_map<uint32_t, std::string> Communicator::getAllDirIDandName() {

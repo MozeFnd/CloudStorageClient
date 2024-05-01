@@ -18,32 +18,8 @@ used_id                本地已经使用的id列表
 
 */
 
-typedef std::unique_lock<std::mutex> guard;
-
 namespace db_key {
     const std::string USED_ID = "used_id";
-};
-
-class LockManager{
-public:
-    LockManager(){}
-    ~LockManager(){}
-    std::mutex& get_lock(std::string key) {
-        return locks[key];
-    }
-
-    void lock(std::string key) {
-        guard tmp_guard(manager_lock);
-        locks[key].lock();
-    }
-
-    void unlock(std::string key) {
-        guard tmp_guard(manager_lock);
-        locks[key].unlock();
-    }
-private:
-    std::mutex manager_lock;
-    std::unordered_map<std::string, std::mutex> locks;
 };
 
 class KVStore
@@ -61,7 +37,7 @@ public:
 
     std::vector<uint32_t> get_used_id() {
         auto& tmp_mutex = lock_manager.get_lock(db_key::USED_ID);
-        guard tmp_guard(tmp_mutex);
+        Guard tmp_guard(tmp_mutex);
         std::vector<uint32_t> ret;
         std::string id_str = read(db_key::USED_ID);
         auto id_str_arr = splitStr(id_str, ',');
@@ -75,7 +51,7 @@ public:
     // 增加成果返回 true，增加失败返回 false
     void add_used_id(uint32_t id){
         auto& tmp_mutex = lock_manager.get_lock(db_key::USED_ID);
-        guard tmp_guard(tmp_mutex);
+        Guard tmp_guard(tmp_mutex);
         std::string new_val = read(db_key::USED_ID);
         if (new_val.empty()) {
             new_val = std::to_string(id);
@@ -95,6 +71,8 @@ public:
         auto path = read(key);
         return path;
     }
+
+
 private:
     HKEY hKey;
     LockManager lock_manager;

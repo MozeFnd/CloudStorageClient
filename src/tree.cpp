@@ -57,7 +57,7 @@ std::shared_ptr<Node> Node::fromSerializedStr(const std::string& serialezed) {
     return ret;
 }
 
-std::shared_ptr<Node> Node::fromPath(std::wstring abs_path, std::wstring relative_path, bool is_root){
+std::shared_ptr<Node> Node::fromPath(std::wstring abs_path, std::wstring parent_path, bool is_root){
     std::filesystem::path p(abs_path);
     if (!std::filesystem::exists(p)) {
         qDebug() << "path: " << QString::fromStdWString(abs_path) << "does not exist.";
@@ -69,7 +69,7 @@ std::shared_ptr<Node> Node::fromPath(std::wstring abs_path, std::wstring relativ
     node->last_modified = LONG_LONG_AGO;
     node->max_last_modified = node->last_modified;
     node->name = p.filename().wstring();
-    node->relative_path = relative_path + node->name;
+    node->relative_path = parent_path + node->name;
     node->file_type = DIRECTORY;
     FILETIME tmp_max = node->last_modified;
 
@@ -95,4 +95,48 @@ std::shared_ptr<Node> Node::fromPath(std::wstring abs_path, std::wstring relativ
     }
     node->max_last_modified = tmp_max;
     return node;
+}
+
+std::shared_ptr<Node> Node::findChildByRelativePath(std::shared_ptr<Node> cur_node, std::string relative_path) {
+    auto vec = splitStr(relative_path, '/');
+    if (vec.size() == 0) {
+        std::cerr << "empty relative_path" << std::endl;
+    }
+    std::string name_str = wstr2str(cur_node->name);
+    if (vec[0] != name_str) {
+        std::cerr << "vec[0]: " << vec[0] << "  name: " << name_str << std::endl;
+    }
+    if (vec.size() == 1) {
+        return cur_node;
+    }
+    for (auto child : cur_node->children) {
+        if (wstr2str(child->name) == vec[1]) {
+            std::string next = relative_path.substr(vec[0].size() + 1);
+            return findChildByRelativePath(child, next);
+        }
+    }
+    return nullptr;
+}
+
+void Node::updateTimestamp(std::shared_ptr<Node> cur_node, std::string relative_path, uint64_t timestamp) {
+    auto vec = splitStr(relative_path, '/');
+    std::string name_str = wstr2str(cur_node->name);
+    if (vec.size() == 0 || vec[0] != name_str) {
+        std::cerr << "empty relative_path" << std::endl;
+    }
+
+    if (vec.size() == 1) {
+        cur_node->last_modified = MicrosecondsToFileTime(timestamp);
+        cur_node->max_last_modified = cur_node->last_modified;
+        return;
+    }
+    cur_node->max_last_modified = max_filetime(cur_node->max_last_modified,
+                                               MicrosecondsToFileTime(timestamp));
+
+    for (auto child : cur_node->children) {
+        if (wstr2str(child->name) == vec[1]) {
+            std::string next = relative_path.substr(vec[0].size() + 1);
+            updateTimestamp(child, next, timestamp);
+        }
+    }
 }

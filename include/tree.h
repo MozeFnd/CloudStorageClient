@@ -52,6 +52,10 @@ public:
 
     static std::shared_ptr<Node> fromPath(std::wstring abs_path, std::wstring relative_path, bool is_root);
 
+    static std::shared_ptr<Node> findChildByRelativePath(std::shared_ptr<Node> cur_node, std::string relative_path);
+
+    static void updateTimestamp(std::shared_ptr<Node> cur_node, std::string relative_path, uint64_t timestamp);
+
     static void formatted(std::shared_ptr<Node> cur_node, std::string& cur_str, uint32_t layer) {
         std::string indent = "";
         for (size_t i = 0;i < layer;i++) {
@@ -61,6 +65,17 @@ public:
         for (auto child : cur_node->children) {
             formatted(child, cur_str, layer + 1);
         }
+    }
+
+    static int compare(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2) {
+        int result = CompareFileTime(&node1->max_last_modified, &node2->max_last_modified);
+        if (result == 0) {
+            return 0;
+        }
+        if (result < 0) {
+            return -1;
+        }
+        return 1;
     }
 };
 

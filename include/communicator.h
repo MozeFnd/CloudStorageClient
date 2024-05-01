@@ -19,37 +19,58 @@ public:
         AcquireID = 2,
         GetAllDir = 3,
         AddDir = 4,
-        SyncFile = 5,
-        GetRemoteTree = 6,
-        UpdateRemoteTree = 7
+        UploadFile = 5,
+        DownloadFile = 6,
+        GetRemoteTree = 7,
+        UpdateRemoteTree = 8,
     };
     Communicator(std::shared_ptr<KVStore> kvstore);
     ~Communicator();
+
     bool buildConnection();
+
     void closeConnection();
+
     bool login(QString uname, QString pwd);
+
     void blockRead(char* buffer, int n);
+
     void blockWrite(char* buffer, int n);
+
     uint32_t acquireID();
+
     void remoteAddNewDirectory(uint32_t id, std::string serialized);
-    void syncFile(uint32_t id, std::wstring path, std::string relativePath);
+
+    void uploadFile(uint32_t id, std::wstring path, std::string relativePath);
+
+    void downloadFile(uint32_t id, std::string relativePath);
+
     std::unordered_map<uint32_t, std::string> getAllDirIDandName();
+
     std::shared_ptr<Node> getRemoteTree(uint32_t id) {
         if (!buildConnection()) {
             // logging;
             return nullptr;
         }
-        int max_batch_size = 1000;
-        char* buffer = (char*)malloc(max_batch_size);
+        char* buffer = (char*)malloc(5);
         buffer[0] = GetRemoteTree;
         *(uint32_t*)(buffer+1) = id;
         blockWrite(buffer, 5);
 
-        if (socket_.waitForReadyRead()) {
-            blockRead(buffer, 4);
-        } else {
-            qDebug() << "Error: " << socket_.errorString();
-        }
+        blockRead(buffer, 4);
+        uint32_t tree_size = *(uint32_t*)buffer;
+        free(buffer);
+
+        buffer = (char*)malloc(tree_size);
+        blockRead(buffer, tree_size);
+        tree::Node* pb_node = new tree::Node();
+        std::string tmp_str(buffer, tree_size);
+        pb_node->ParseFromString(tmp_str);
+        auto ret = Node::fromPbNode(pb_node);
+
+        delete pb_node;
+        free(buffer);
+        return ret;
     }
 
 private:

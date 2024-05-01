@@ -10,7 +10,32 @@
 #include <codecvt>
 #include <QDebug>
 #include <stdlib.h>
+#include <mutex>
 // #include <openssl/md5.h>
+
+typedef std::unique_lock<std::mutex> Guard;
+
+class LockManager{
+public:
+    LockManager(){}
+    ~LockManager(){}
+    std::mutex& get_lock(std::string key) {
+        return locks[key];
+    }
+
+    void lock(std::string key) {
+        Guard tmp_guard(manager_lock);
+        locks[key].lock();
+    }
+
+    void unlock(std::string key) {
+        Guard tmp_guard(manager_lock);
+        locks[key].unlock();
+    }
+private:
+    std::mutex manager_lock;
+    std::unordered_map<std::string, std::mutex> locks;
+};
 
 extern FILETIME LONG_LONG_AGO;
 

@@ -23,8 +23,9 @@ MainWindow::MainWindow(QWidget *parent)
     为方便debug，在初始时给数据库增加一些内容
     */
 #ifdef DEBUG_MODE
-    kvstore_->store("used_id", "1");
+    kvstore_->store("used_id", "1,39");
     kvstore_->set_id_path("1", "C:/Users/XUN/Desktop/data/A");
+    kvstore_->set_id_path("39", "C:/Users/XUN/Desktop/data/中文");
     // kvstore_->set_id_path("2", "C:/Users/XUN/Desktop/qt_projects/data/中文");
 #endif
 
@@ -76,17 +77,6 @@ MainWindow::MainWindow(QWidget *parent)
         path_tree_->display(ui->treeView);
     });
 
-    const std::wstring filepath = L"C:/Users/XUN/Desktop/data/中文\\文本.txt";
-    // std::string filepath = "C:/Users/XUN/Desktop/data/A\\a.txt";
-    std::filesystem::path w_path(filepath);
-    std::ifstream file(w_path, std::ios::binary);
-    const size_t BUFFER_SIZE = 1000;
-    char buffer[BUFFER_SIZE];
-    if (!file.is_open()) {
-        exit(-1);
-    } else {
-        file.read(buffer, BUFFER_SIZE);
-    }
     std::string text = "{\"dirname\":\"A\",\"type\":\"direcory\",\"contents\":[{\"dirname\":\"B\",\"type\":"
                        "\"direcory\",\"contents\":[{\"dirname\":\"D\",\"type\":\"direcory\"},{\"dirname\":\"E\","
                        "\"type\":\"direcory\"}]},{\"dirname\":\"C\",\"type\":\"direcory\"},{\"size\":\"31\","
@@ -95,6 +85,12 @@ MainWindow::MainWindow(QWidget *parent)
     // auto js = Json::fromJsonString(text);
     // std::string back = js->toString();
     // qDebug() << QString::fromStdString(back);
+
+    // auto tmp = Node::fromPath(str2wstr("C:/Users/XUN/Desktop/data/A"), str2wstr(""), true);
+    // auto child = Node::findChildByRelativePath(tmp, "A/B");
+
+    comm_->downloadFile(39, "中文/empty.txt");
+
     return;
 }
 
